@@ -3,6 +3,13 @@ from win10toast import ToastNotifier
 
 #Add Logger
 
+def api_validator(api):
+    headers = {'API-Key': api,'Content-Type':'application/json'}
+    data = {"url": "google.com", "visibility": "public"}
+    response = requests.post('https://urlscan.io/api/v1/scan/',headers=headers, data=json.dumps(data)).json()
+    if response['message'] == "API key supplied but not found in database!":
+        return False
+    return True
 
 def valid_url(urlToScan):
     if (not urlToScan) or (" " in urlToScan) or ("." not in urlToScan):
@@ -37,20 +44,20 @@ def domain_in_db(urlToScan,db):
         return 2, domain
 
 
-def scan(domainToAdd, db):
-    toaster.show_toast("URLScan","Scanning URL...Don't visit URL yet!",icon_path="search.ico",duration=5)
-    headers = {'API-Key':'432fddc8-c4e8-4f02-b30f-3fcc0ddf3270','Content-Type':'application/json'}
+def scan(domainToAdd, db, apiKey):
+    toaster.show_toast("ClipScanner","Scanning URL...Don't visit URL yet!",icon_path="search.ico",duration=5)
+    headers = {'API-Key':apiKey, 'Content-Type':'application/json'}
     data = {"url": domainToAdd, "visibility": "public"}
     response = requests.post('https://urlscan.io/api/v1/scan/',headers=headers, data=json.dumps(data))
     connection = sqlite3.connect(db)
-    #cursor = connection.cursor()
     if response.status_code != 200:
         if response.status_code == 400:
-            toaster.show_toast("ClipScanner","Warning! BLACKLISTED URL! Proceed with caution!",icon_path='warning.ico',duration=7)
+            toaster.show_toast("ClipScanner","Blacklisted URL! Proceed with caution!",icon_path='warning.ico',duration=7)
             cmd = """INSERT INTO websites VALUES ("{}",{});""".format(domainToAdd,1)
             connection.execute(cmd)
-        else:    
-            toaster.show_toast("ClipScanner","Invalid URL",icon_path='warning.ico',duration=5)
+        else:
+            print(domainToAdd)
+            toaster.show_toast("ClipScanner","Warning! Invalid URL",icon_path='warning.ico',duration=5)
         connection.commit()
         connection.close()
         return
@@ -83,6 +90,17 @@ def scan(domainToAdd, db):
 prev = ""
 toaster = ToastNotifier()
 
+try:
+    with open("api","r") as f:
+        apiKey = f.read().strip("\n")
+except:
+    toaster.show_toast("ERROR!","File(s) for ClipScanner missing! Please re-run setup! Exiting...",icon_path='warning.ico',duration=15)
+    exit(1)
+    
+if not api_validator(apiKey):
+    toaster.show_toast("ERROR!","File(s) for ClipScanner corrupted! Please re-run setup! Exiting...",icon_path='warning.ico',duration=15)
+    exit(1)
+    
 while True:
     time.sleep(0.5)
     urlToScan = pyperclip.paste()
@@ -102,4 +120,4 @@ while True:
     elif inDB==2:
         toaster.show_toast("ClipScanner","Warning! Potential Malicious URL detected in clipboard. Proceed with Caution",icon_path='warning.ico',duration=5)
         continue
-    scan(domain, "local.db")
+    scan(domain, "local.db", apiKey)
