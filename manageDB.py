@@ -1,4 +1,4 @@
-import sqlite3, os, time, tldextract
+ import sqlite3, os, time, tldextract
 
 print("="*40)
 print("   ClipScanner Manage Local Database")
@@ -28,6 +28,9 @@ while True:
         extract = tldextract.extract(url)
         if extract.domain and extract.suffix:
             domain = extract.domain + "." + extract.suffix
+            if " " in domain:
+                print("Inavlid URL!")
+                continue
         else:
             print("Inavlid URL!")
             continue
