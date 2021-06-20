@@ -3,7 +3,7 @@
 What Is This?
 -------------
 
-This is a Python application that scans the URL in your clipboard (if URL is the only content of clipboard) using the urlscan.io API and gives appropriate notification depending on nature of the URL.
+This is a Python application that scans the URL in your clipboard (if URL is the only content of clipboard) using the urlscan.io API and gives appropriate notification depending on nature of the URL. The scan results will be stored in a Local Database, so the results will be faster for same URL if being scanned again.
 
 
 How To Use This?
