@@ -1,4 +1,4 @@
- import sqlite3, os, time, tldextract
+import sqlite3, os, time, tldextract
 
 print("="*40)
 print("   ClipScanner Manage Local Database")
