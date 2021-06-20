@@ -8,9 +8,9 @@ def api_validator(api):
         return False
     return True
 
-print("="*30)
-print("Welcome to ClipScanner Setup")
-print("="*30)
+print("="*40)
+print("     Welcome to ClipScanner Setup")
+print("="*40)
 print()
 print("To use Clip Scanner, you need to have an API Key from urlscan.io.")
 print("If you are not sure how to get one, we'll guide you to get one.\n")
@@ -25,7 +25,7 @@ while True:
 
     if user == "5":
         print("We're sorry to see you leave. Have a nice day!")
-        exit()
+        exit(0)
     if user in ["2","3","4"]:
         user_api = input("Key: ")
         if api_validator(user_api):
@@ -33,7 +33,7 @@ while True:
                 conn = sqlite3.connect("local.db")
                 cursor = conn.cursor()
                 cursor.execute("""DROP TABLE IF EXISTS websites""")
-                cursor.execute("""CREATE TABLE websites (site TEXT NOT NULL, malicious INTEGER NOT NULL);""")
+                cursor.execute("""CREATE TABLE websites (site TEXT NOT NULL UNIQUE, malicious INTEGER NOT NULL);""")
                 conn.commit()
                 conn.close()
             break
@@ -44,13 +44,14 @@ while True:
     else:
         print("----- Tutorial -----")
         print("Press any key to continue after each step")
+        print()
         print("Step 1: Visit https://urlscan.io/user/login/")
         input()
         print("Step 2: If you have an account, login, else create one.")
         input()
         print("Step 3: After login, head to https://urlscan.io/user/apikey/new/")
         input()
-        print("Step 4: Provide a description of your choice and create a API Key")
+        print("Step 4: Provide a description of your choice and create an API Key")
         input()
         print("Step 5: You will automatically be redirected to https://urlscan.io/user/profile/")
         print("Copy the key alone (will be of the format: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX)")
