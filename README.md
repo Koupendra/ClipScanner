@@ -19,5 +19,5 @@ How To Use This?
 NOTE
 ----
 
-This will work only on Windows 10 as of now. (I will try to extend it for Linux in future).
+This will work only on Windows 10 as of now (I will try to extend it for Linux in future).
 The project is still in development, so it might have bugs.
