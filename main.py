@@ -1,8 +1,7 @@
-import requests, json, time, pyperclip, re, tldextract, sqlite3
+import requests, json, time, pyperclip, re, tldextract, sqlite3, os
 from win10toast import ToastNotifier
 
-#Add Logger
-
+   
 def api_validator(api):
     headers = {'API-Key': api,'Content-Type':'application/json'}
     data = {"url": "google.com", "visibility": "public"}
@@ -32,16 +31,12 @@ def domain_in_db(urlToScan,db):
     extract = tldextract.extract(urlToScan)
     domain = extract.domain + "." + extract.suffix
     connection = sqlite3.connect(db)
-    #cursor = connection.cursor()
-    cmd = """SELECT malicious FROM websites WHERE site = "{}";""".format(extract)
+    cmd = """SELECT malicious FROM websites WHERE site = "{}";""".format(domain)
     val = connection.execute(cmd).fetchall()
     connection.close()
     if len(val)==0:
         return 0, domain
-    if val[0][1]==0:
-        return 1, domain
-    if val[0][1]==1:
-        return 2, domain
+    return val[0][0], domain
 
 
 def scan(domainToAdd, db, apiKey):
@@ -52,7 +47,7 @@ def scan(domainToAdd, db, apiKey):
     connection = sqlite3.connect(db)
     if response.status_code != 200:
         if response.status_code == 400:
-            toaster.show_toast("ClipScanner","Blacklisted URL! Proceed with caution!",icon_path='warning.ico',duration=7)
+            blacklisted_url()
             cmd = """INSERT INTO websites VALUES ("{}",{});""".format(domainToAdd,1)
             connection.execute(cmd)
         else:
@@ -76,12 +71,12 @@ def scan(domainToAdd, db, apiKey):
     malicious = op.json()['verdicts']['overall']['malicious']
 
     if malicious:
-        toaster.show_toast("ClipScanner","Warning! Potential Malicious URL detected in clipboard. Proceed with caution!",icon_path='warning.ico',duration=10)
-        cmd = """INSERT INTO websites VALUES ("{}",{})""".format(domainToAdd,1)
+        malicious_url()
+        cmd = """INSERT INTO websites VALUES ("{}",{})""".format(domainToAdd,2)
         connection.execute(cmd)
     else:
-        toaster.show_toast("ClipScanner","URL verified. Good to go",icon_path="verified.ico",duration=10)
-        cmd = """INSERT INTO websites VALUES ("{}",{})""".format(domainToAdd,0)
+        verified_url()
+        cmd = """INSERT INTO websites VALUES ("{}",{})""".format(domainToAdd,3)
         connection.execute(cmd)
     connection.commit()
     connection.close()
@@ -89,16 +84,24 @@ def scan(domainToAdd, db, apiKey):
     
 prev = ""
 toaster = ToastNotifier()
+def blacklisted_url():
+    toaster.show_toast("ClipScanner","Blacklisted URL! Proceed with caution!",icon_path='warning.ico',duration=7)
+    
+def malicious_url():
+    toaster.show_toast("ClipScanner","Warning! Potential Malicious URL detected in clipboard. Proceed with caution!",icon_path='warning.ico',duration=10)
 
-try:
+def verified_url():
+    toaster.show_toast("ClipScanner","URL verified. Good to go",icon_path="verified.ico",duration=10)
+
+if os.path.exists("api") and os.path.isfile("api") and os.path.exists("local.db") and os.path.isfile("local.db"):
     with open("api","r") as f:
         apiKey = f.read().strip("\n")
-except:
+else:
     toaster.show_toast("ERROR!","File(s) for ClipScanner missing! Please re-run setup! Exiting...",icon_path='warning.ico',duration=15)
     exit(1)
     
 if not api_validator(apiKey):
-    toaster.show_toast("ERROR!","File(s) for ClipScanner corrupted! Please re-run setup! Exiting...",icon_path='warning.ico',duration=15)
+    toaster.show_toast("ERROR!","Invalid API Key! Please re-run setup! Exiting...",icon_path='warning.ico',duration=15)
     exit(1)
     
 while True:
@@ -115,9 +118,12 @@ while True:
 
     inDB, domain =  domain_in_db(urlToScan,"local.db")
     if inDB==1:
-        toaster.show_toast("ClipScanner","URL verified. Good to go",icon_path="verified.ico",duration=5)
+        blacklisted_url()
         continue
     elif inDB==2:
-        toaster.show_toast("ClipScanner","Warning! Potential Malicious URL detected in clipboard. Proceed with Caution",icon_path='warning.ico',duration=5)
+        malicious_url()
+        continue
+    elif inDB==3:
+        verified_url()
         continue
     scan(domain, "local.db", apiKey)

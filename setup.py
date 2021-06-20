@@ -32,6 +32,7 @@ while True:
             if user != "4":
                 conn = sqlite3.connect("local.db")
                 cursor = conn.cursor()
+                cursor.execute("""DROP TABLE IF EXISTS websites""")
                 cursor.execute("""CREATE TABLE websites (site TEXT NOT NULL, malicious INTEGER NOT NULL);""")
                 conn.commit()
                 conn.close()
