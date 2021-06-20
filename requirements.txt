@@ -1,0 +1,4 @@
+pyperclip==1.8.2
+tldextract==3.1.0
+win10toast==0.9
+requests==2.25.1
