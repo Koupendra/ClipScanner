@@ -3,7 +3,7 @@
 What Is This?
 -------------
 
-This is a Python application that scans the URL in your clipboard (if URL is the only content of clipboard) using the urlscan.io API and gives appropriate notification depending on nature of the URL. The scan results will be stored in a Local Database, so the results will be faster for same URL if being scanned again.
+This is a Python application that scans the URL in your clipboard (if URL is the only content of clipboard) using the urlscan.io API and gives appropriate notification(s) depending on scanned result of the URL. The scan results will be stored in a Local Database, so the results will be faster for same URL if being scanned again.
 
 
 How To Use This?
@@ -14,6 +14,7 @@ How To Use This?
 3. Run `setup.py` and complete the setup. Tutorial to generate API Key is included in setup.
 4. Run `main.py` (which is the acutal application).
 5. You can start this application at login by configuring your Task Scheduler.
+6. You can also run `manageDB.py` to mark domains as "Blacklisted, "Malicious, or "Verified", manually, which will only affect your local database.
 
 
 NOTE
