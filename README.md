@@ -21,5 +21,6 @@ NOTE
 ----
 
 1. This will work only on Windows 10 as of now (I will try to extend it for Linux in future).
-2. The project is still in development, so it might have bugs.
-3. The URL Scan results are purely based on results from urlscan.io. I am not responsible for a website being reported as "Blacklisted", "Malicious" or "Verified".
+2. Turn off "Focus Assist" to receive notifications.
+3. The project is still in development, so it might have bugs.
+4. The URL Scan results are purely based on results from urlscan.io. I am not responsible for a website being reported as "Blacklisted", "Malicious" or "Verified".
