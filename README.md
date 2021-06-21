@@ -13,7 +13,7 @@ How To Use This?
 2. Run `pip install -r requirements.txt` to install dependencies inside the project folder.
 3. Run `setup.py` and complete the setup. Tutorial to generate API Key is included in setup.
 4. Run `main.py` (which is the acutal application).
-5. You can start this application at login by configuring your Task Scheduler.
+5. You can start this application at startup by configuring your Task Scheduler.
 6. You can also run `manageDB.py` to mark domains as "Blacklisted, "Malicious, or "Verified", manually, which will only affect your local database.
 
 
