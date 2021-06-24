@@ -51,7 +51,6 @@ def scan(domainToAdd, db, apiKey):
             cmd = """INSERT INTO websites VALUES ("{}",{});""".format(domainToAdd,1)
             connection.execute(cmd)
         else:
-            print(domainToAdd)
             toaster.show_toast("ClipScanner","Warning! Invalid URL",icon_path='warning.ico',duration=5)
         connection.commit()
         connection.close()
